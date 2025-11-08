@@ -27,48 +27,48 @@ export default function SignUpPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {/* First Name */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-600 mb-1 text-white">First Name</label>
+              <label className="block text-sm font-medium mb-1 text-white">First Name</label>
               <input
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
 
             {/* Last Name */}
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-600 mb-1 text-white">Last Name</label>
+              <label className="block text-sm font-medium mb-1 text-white">Last Name</label>
               <input
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 transition"
+                className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1 text-white">Email</label>
+            <label className="block text-sm font-medium mb-1 text-white">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+              className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1 text-white">Password</label>
+            <label className="block text-sm font-medium mb-1 text-white">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+              className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
 
@@ -80,7 +80,7 @@ export default function SignUpPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-4">
+        <p className="text-center text-sm text-white mt-4">
           Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
         </p>
       </div>

@@ -9,6 +9,7 @@ export default function AnimatedCandles() {
   const scrollSpeed = 0.6;
 
   useEffect(() => {
+    let animationId: number;
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
 
@@ -113,12 +114,13 @@ export default function AnimatedCandles() {
         });
       }
 
-      requestAnimationFrame(animate);
+      animationId=requestAnimationFrame(animate);
     }
 
     animate();
 
     return () => {
+      cancelAnimationFrame(animationId);
       window.removeEventListener("resize", resize);
     };
   }, []);
