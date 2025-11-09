@@ -26,8 +26,8 @@ export default function AnimatedCandles() {
 
     // Initialize candle data
     for (let i = 0; i < numCandles; i++) {
-      const low = prevClose - Math.random() * 40;
-      const high = prevClose + Math.random() * 40;
+      const low = prevClose - Math.random() * 60;
+      const high = prevClose + Math.random() * 60;
       const open = prevClose;
       const close = Math.random() * (high - low) + low;
       prevClose = close;
