@@ -2,8 +2,9 @@
 import AnimatedCandles from "@/components/AnimatedCandles";
 import { useState } from "react";
 import { QuizCardInterface } from "@/interfaces/quizCardInterface";
-import QuestionCard from "@/components/QuizCard/quizCard";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Circle, CircleDot } from "lucide-react";
+import { API_BASE_URL } from "@/config/api";
+import axios from "axios";
 
 let quizQuestions = [
     {
@@ -116,6 +117,43 @@ function setQuestionCard(questionNo: number): QuizCardInterface {
 
 export default function QuizPage() {
     const [question, setQuestion] = useState<QuizCardInterface | null>(null);
+    const [selected, setSelected] = useState<number | null>(null);
+    const [answers, setAnswers] = useState<{ questionId: number; selected: number }[]>([]);
+
+    function handleQuestionClick(index: number) {
+        setSelected(index);
+    }
+    function handleNextClick(questionId: number, selected: any) {
+        setSelected(null);
+        if (question != null) {
+            setQuestion(setQuestionCard(question.id + 1));
+        }
+        setAnswers(prev => {
+            const existing = prev.find(ans => ans.questionId === questionId);
+            if (existing) {
+                return prev.map(ans =>
+                    ans.questionId === questionId
+                        ? { ...ans, selected: selected } // update selected option
+                        : ans // keep other answers unchanged
+                );
+            }
+            return [...prev, { questionId: questionId, selected: selected }];
+        })
+    }
+    function handleSubmit(questionId : number, selected : any){
+        setAnswers(prev => {
+            const existing = prev.find(ans => ans.questionId === questionId);
+            if (existing) {
+                return prev.map(ans =>
+                    ans.questionId === questionId
+                        ? { ...ans, selected: selected } // update selected option
+                        : ans // keep other answers unchanged
+                );
+            }
+            return [...prev, { questionId: questionId, selected: selected }];
+        })
+        console.log(answers)
+    }
     return (
         <div className="relative flex h-screen items-center justify-center overflow-hidden">
             <AnimatedCandles />
@@ -123,14 +161,36 @@ export default function QuizPage() {
             {!question && <div className="flex flex-col items-center justify-center text-center relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl text-white">
                 <h1 className="text-2xl font-bold mb-4">Please take the quiz to proceed</h1>
                 <h3 className="text-xl font-bold mb-4">Let's get to know your financial Personality!</h3>
-                <button onClick={() => setQuestion(setQuestionCard(1))} className=" w-1/4 py-2 bg-blue-600 hover:bg-blue-700 transition-all rounded-lg font-semibold shadow-lg cursor-pointer">Start Quiz</button>
+                <button onClick={() => setQuestion(setQuestionCard(1))} className=" w-1/4 py-2 bg-white/20 hover:bg-white/30 transition-all rounded-lg font-semibold shadow-lg cursor-pointer">Start Quiz</button>
             </div>}
             {
                 question && <div className="flex flex-col items-center justify-center text-center relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl text-white">
-                    <QuestionCard quizCard={question} />
+                    <div className="w-full">
+                        <h1 className="text-xl">{question.questionText}</h1>
+                        <div className="flex flex-col gap-3 w-full mt-4">
+                            {
+                                question.options.map((option: string, index: number) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleQuestionClick(index)}
+                                        className={`py-3 px-4 rounded-lg transition-all duration-200 cursor-pointer 
+            ${selected === index
+                                                ? "bg-white-600 text-white"        // selected style
+                                                : "bg-white/20 hover:bg-white/30 text-white"
+                                            }`}
+                                    >
+                                        <div className="flex flex-row">
+                                            {selected != index ? <Circle size={20} className="text-white-400" /> : <CircleDot size={20} className="text-white-400" />}
+                                            <span id={option} className="ml-6 text-white text-left">{option}</span>
+                                        </div>
+                                    </button>
+                                ))
+                            }
+                        </div>
+                    </div>
                     <div className="flex flex-row justify-between w-full mt-6">
                         <button
-                            onClick={() => setQuestion(setQuestionCard(question.id -1 ))}
+                            onClick={() => setQuestion(setQuestionCard(question.id - 1))}
                             disabled={question.id === 1} // disable if it's the first question
                             className={`bg-white/20 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center
                                 ${question.id === 1
@@ -140,12 +200,29 @@ export default function QuizPage() {
                         >
                             <ArrowLeft size={18} />
                         </button>
-
-                        <button 
-                        onClick={() => setQuestion(setQuestionCard(question.id + 1))}
-                        className="bg-white/20 hover:bg-white/30 text-white py-2 px-4 rounded-lg transition-all duration-200 cursor-pointer">
-                            <ArrowRight size={18} />
-                        </button>
+                        {question.id !== quizQuestions.length ?
+                            <button
+                                onClick={() => handleNextClick(question.id, selected)}
+                                disabled={selected === null}
+                                className={`bg-white/20 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center
+                                ${selected === null
+                                        ? "opacity-40 cursor-not-allowed"  // visually disabled
+                                        : "hover:bg-white/30 cursor-pointer"
+                                    }`}>
+                                <ArrowRight size={18} />
+                            </button>
+                            :
+                            <button
+                                onClick={() => handleSubmit(question.id, selected)}
+                                disabled={selected === null}
+                                className={`bg-white/20 text-white py-2 px-4 rounded-lg transition-all duration-200 flex items-center justify-center
+                                ${selected === null
+                                        ? "opacity-40 cursor-not-allowed"  // visually disabled
+                                        : "hover:bg-white/30 cursor-pointer"
+                                    }`}>
+                                Submit
+                            </button>
+                        }
                     </div>
                 </div>
             }
