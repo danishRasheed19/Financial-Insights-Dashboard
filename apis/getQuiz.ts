@@ -1,7 +1,13 @@
-import axios from "axios";
-import { baseApi } from "./origin";
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+import { baseApi } from "./origin"
 
-export async function getQuizQuestions(){
-    baseApi.get("path to api");
+export async function getQuizQuestions() {
+  const response = await baseApi.get("/personality/questions")
+  return response.data
+}
+
+export async function submitQuizAnswers(payload: {
+  answers: Record<string, number>
+}) {
+  const response = await baseApi.post("/personality/submit", payload)
+  return response.data
 }

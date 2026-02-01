@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-export default function AnimatedCandles() {
+interface AnimatedCandlesProps {
+  fullScreen?: boolean; // optional prop
+}
+
+export default function AnimatedCandles({fullScreen = false}: AnimatedCandlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const verticalCenter = 0.55;
   const verticalRange = 250;
@@ -125,5 +129,11 @@ export default function AnimatedCandles() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute top-0 right-0 h-full w-1/2 z-0" />;
+  const positionClasses = fullScreen
+    ? "absolute top-0 left-0 h-full w-full z-0"
+    : "absolute top-0 right-0 h-full w-1/2 z-0";
+
+  return(
+    <canvas ref={canvasRef} className={positionClasses} />
+  ) 
 }
