@@ -1,89 +1,140 @@
-"use client";
-import { useState } from "react";
-import AnimatedCandles from "@/components/AnimatedCandles";
+"use client"
+
+import { useState } from "react"
+import AnimatedCandles from "@/components/AnimatedCandles"
 
 export default function SignUpPage() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
   const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Name:", firstName + " " + lastName, "Email:", email, "Password:", password);
-    // TODO: Add API call to backend for authentication
-  };
+    e.preventDefault()
+    console.log(firstName, lastName, email, password)
+  }
 
   return (
-    <div className="relative flex h-screen items-center justify-center bg-black overflow-hidden">
-      {/* Animated candles in the background */}
+    <div className="relative min-h-screen bg-black overflow-hidden">
+      {/* Candles on right half */}
       <AnimatedCandles />
 
-      {/* Centered signup form */}
-      <div className="relative z-10 w-full max-w-sm bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 shadow-2xl text-white">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 text-white">Register</h2>
+      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 min-h-screen">
+        
+        {/* LEFT PANEL */}
+        <div className="hidden md:flex flex-col justify-center px-12 space-y-6">
+          <h1 className="text-5xl font-bold text-white drop-shadow-lg">
+            Build Your
+            <span className="block text-white/80">Investor Profile</span>
+          </h1>
 
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {/* First Name */}
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1 text-white">First Name</label>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
+          <p className="text-lg text-white/70 max-w-md">
+            We analyze your personality, risk tolerance, and goals
+            to create a portfolio that fits *you*.
+          </p>
 
-            {/* Last Name */}
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1 text-white">Last Name</label>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
+          <div className="flex gap-3">
+            <Tag text="AI Driven" />
+            <Tag text="Risk-Aware" />
+            <Tag text="Long-Term" />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-white">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1 text-white">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 cursor-pointer"
+        {/* RIGHT PANEL */}
+        <div className="flex items-center justify-center px-4">
+          <div
+            className="
+              w-full max-w-md
+              bg-white/10 backdrop-blur-2xl
+              border border-white/20
+              rounded-2xl
+              p-8
+              shadow-[0_20px_60px_rgba(255,255,255,0.12)]
+            "
           >
-            Sign Up
-          </button>
-        </form>
+            <h2 className="text-3xl font-bold text-white text-center">
+              Create Account
+            </h2>
 
-        <p className="text-center text-sm text-white mt-4">
-          Already have an account? <a href="/login" className="text-blue-600 hover:underline">Login</a>
-        </p>
+            <p className="text-sm text-white/70 text-center mt-1">
+              Start your personalized investing journey
+            </p>
+
+            <form onSubmit={handleSignUp} className="mt-6 space-y-4">
+              <div className="flex gap-4">
+                <Input label="First Name" value={firstName} setValue={setFirstName} />
+                <Input label="Last Name" value={lastName} setValue={setLastName} />
+              </div>
+
+              <Input label="Email" value={email} setValue={setEmail} type="email" />
+              <Input label="Password" value={password} setValue={setPassword} type="password" />
+
+              <button
+                type="submit"
+                className="
+                  w-full mt-4 py-2
+                  bg-white text-black font-semibold
+                  rounded-xl
+                  transition-transform duration-200
+                  hover:scale-[1.05]
+                  active:scale-[0.98]
+                  shadow-[0_8px_30px_rgba(255,255,255,0.35)]
+                  cursor-pointer
+                "
+              >
+                Sign Up
+              </button>
+            </form>
+
+            <p className="text-center text-sm text-white/70 mt-6">
+              Already have an account?{" "}
+              <a href="/login" className="text-white font-medium hover:underline">
+                Login
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
+}
+
+function Input({
+  label,
+  value,
+  setValue,
+  type = "text",
+}: {
+  label: string
+  value: string
+  setValue: (v: string) => void
+  type?: string
+}) {
+  return (
+    <div className="flex-1">
+      <label className="block text-sm text-white/80 mb-1">
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        required
+        className="
+          w-full px-4 py-2 rounded-lg
+          bg-white/10 border border-white/20
+          text-white
+          focus:outline-none focus:ring-2 focus:ring-white/40
+        "
+      />
+    </div>
+  )
+}
+
+function Tag({ text }: { text: string }) {
+  return (
+    <span className="px-3 py-1 rounded-full bg-white/20 text-white text-sm">
+      {text}
+    </span>
+  )
 }

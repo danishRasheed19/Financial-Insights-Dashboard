@@ -3,8 +3,8 @@ import { useEffect, useRef } from "react";
 
 export default function AnimatedCandles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const verticalCenter = 0.55; // 0.5 = middle of screen, tweak if login widget is slightly below
-  const verticalRange = 250; // range of up/down candle swing
+  const verticalCenter = 0.55;
+  const verticalRange = 250;
   const candleSpacing = 15;
   const scrollSpeed = 0.6;
 
@@ -21,7 +21,7 @@ export default function AnimatedCandles() {
     window.addEventListener("resize", resize);
 
     const numCandles = Math.floor(canvas.width / candleSpacing);
-    let prevClose = 200; // start price
+    let prevClose = 200; 
     let candles: any[] = [];
 
     // Initialize candle data
@@ -125,5 +125,5 @@ export default function AnimatedCandles() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 z-0" />;
+  return <canvas ref={canvasRef} className="absolute top-0 right-0 h-full w-1/2 z-0" />;
 }
