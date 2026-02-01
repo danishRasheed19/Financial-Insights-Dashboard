@@ -1,17 +1,51 @@
 "use client"
-
 import { useState } from "react"
+import axios from "axios"
 import AnimatedCandles from "@/components/AnimatedCandles"
-
+import { useRouter } from "next/navigation"
+import { Loader2 } from "lucide-react"
+import { register } from "@/apis/auth"
 export default function SignUpPage() {
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
+  const [first_name, setFirstName] = useState("")
+  const [last_name, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const handleSignUp = async () => {
+    try {
+      setLoading(true);
+      const data = await register({
+        first_name,
+        last_name,
+        email,
+        password,
+      });
 
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log(firstName, lastName, email, password)
+      const { access_token } = data;
+
+      // Save token (e.g., localStorage or cookie)
+      localStorage.setItem("token", access_token);
+
+      // Redirect to dashboard or desired page
+      router.push("/quiz");
+    } catch (err: any) {
+      // Handle error
+      if (err.response) {
+        // API responded with error status
+        setError(err.response.data.detail || "Login failed");
+      } else if (err.request) {
+        // Request made but no response
+        setError("No response from server. Try again later.");
+      } else {
+        // Something else went wrong
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   return (
@@ -20,7 +54,7 @@ export default function SignUpPage() {
       <AnimatedCandles />
 
       <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 min-h-screen">
-        
+
         {/* LEFT PANEL */}
         <div className="hidden md:flex flex-col justify-center px-12 space-y-6">
           <h1 className="text-5xl font-bold text-white drop-shadow-lg">
@@ -60,10 +94,13 @@ export default function SignUpPage() {
               Start your personalized investing journey
             </p>
 
-            <form onSubmit={handleSignUp} className="mt-6 space-y-4">
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              handleSignUp()
+            }} className="mt-6 space-y-4">
               <div className="flex gap-4">
-                <Input label="First Name" value={firstName} setValue={setFirstName} />
-                <Input label="Last Name" value={lastName} setValue={setLastName} />
+                <Input label="First Name" value={first_name} setValue={setFirstName} />
+                <Input label="Last Name" value={last_name} setValue={setLastName} />
               </div>
 
               <Input label="Email" value={email} setValue={setEmail} type="email" />
@@ -71,6 +108,7 @@ export default function SignUpPage() {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="
                   w-full mt-4 py-2
                   bg-white text-black font-semibold
@@ -81,8 +119,11 @@ export default function SignUpPage() {
                   shadow-[0_8px_30px_rgba(255,255,255,0.35)]
                   cursor-pointer
                 "
-              >
-                Sign Up
+              >{loading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Sign Up"
+              )}
               </button>
             </form>
 
