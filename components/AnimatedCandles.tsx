@@ -125,5 +125,5 @@ export default function AnimatedCandles() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} className="absolute inset-0 z-0" />;
+  return <canvas ref={canvasRef} className="absolute top-0 right-0 h-full w-1/2 z-0" />;
 }
