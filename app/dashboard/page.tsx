@@ -10,7 +10,9 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, BarChart, XAxis, YAxis, Tooltip, Bar } from "recharts"
-
+import { getPersonality } from "@/apis/personality"
+import { PersonalityType } from "@/interfaces/personalityTypeInterface"
+import { useEffect, useState } from "react"
 const recommendedStocks = [
   {
     symbol: "AAPL",
@@ -52,15 +54,6 @@ const portfolioData = [
 ]
 const portfolioColors = ["#6366F1", "#EC4899", "#10B981", "#F59E0B"]
 
-// Personality Alignment Data
-const radarData = [
-  { trait: "Risk Tolerance", value: 80 },
-  { trait: "Growth Focus", value: 90 },
-  { trait: "Volatility Comfort", value: 60 },
-  { trait: "Long-Term Focus", value: 75 },
-  { trait: "Analytical", value: 85 },
-]
-
 // Confidence Level Data
 const barData = recommendedStocks.map((s) => ({
   symbol: s.symbol,
@@ -68,6 +61,38 @@ const barData = recommendedStocks.map((s) => ({
 }))
 
 export default function DashboardPage() {
+  const [loading,setLoading] =useState(false);
+  const [error,setError] =useState("");
+  const [personalityType, setPersonalityType] = useState<PersonalityType | null>(null);
+  useEffect(() => {
+      const fetchPersonalityType = async () => {
+        try {
+          setLoading(true);
+          const res = await getPersonality({user_id:"temp"});
+          setPersonalityType(res);
+          console.log(res);
+        } catch (err) {   
+          setError("Failed to load user data");
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchPersonalityType();
+    }, []); 
+  const MIN_VISIBLE_VALUE = 0.5;
+const MAX_TRAIT_VALUE = 4;
+
+const radarData = personalityType
+  ? Object.entries(personalityType.scores).map(([trait, rawValue]) => ({
+      trait: trait.charAt(0).toUpperCase() + trait.slice(1),
+      value:
+        rawValue === 0
+          ? MIN_VISIBLE_VALUE
+          : Math.min(rawValue, MAX_TRAIT_VALUE),
+      originalValue: rawValue, // keep real value if you want tooltips later
+    }))
+  : [];
   return (
     <div className="min-h-screen p-6 space-y-6 bg-gradient-to-br from-black via-gray-900 to-gray-800">
       {/* Header */}
@@ -82,19 +107,19 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent className="flex gap-4 flex-wrap">
           <Badge className="bg-white text-black rounded-lg px-3 py-1 font-medium transform transition-transform duration-300 hover:scale-110">
-            Analytical Thinker
+           {personalityType?.personality_type}
           </Badge>
           <Badge className="bg-white text-black rounded-lg px-3 py-1 font-medium transform transition-transform duration-300 hover:scale-110">
-            Medium Risk
+            {personalityType?.risk}
           </Badge>
           <Badge className="bg-white text-black rounded-lg px-3 py-1 font-medium transform transition-transform duration-300 hover:scale-110">
-            Long-Term Focused
+            {personalityType?.planning}
           </Badge>
         </CardContent>
       </Card>
 
       {/* Portfolio Snapshot */}
-      <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_40px_rgba(255,255,255,0.1)] rounded-xl">
+      {/* <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_40px_rgba(255,255,255,0.1)] rounded-xl">
         <CardHeader>
           <CardTitle className="text-white drop-shadow-sm">Portfolio Snapshot</CardTitle>
         </CardHeader>
@@ -103,7 +128,7 @@ export default function DashboardPage() {
             <Metric key={kpi.label} label={kpi.label} value={kpi.value} />
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -137,7 +162,7 @@ export default function DashboardPage() {
             <RadarChart data={radarData}>
               <PolarGrid stroke="#ffffff33" />
               <PolarAngleAxis dataKey="trait" stroke="white" />
-              <PolarRadiusAxis stroke="#ffffff33" />
+              <PolarRadiusAxis stroke="#ffffff33"domain={[0, MAX_TRAIT_VALUE]}/>
               <Radar dataKey="value" stroke="#6366F1" fill="#6366F1" fillOpacity={0.3} />
             </RadarChart>
           </ResponsiveContainer>
@@ -197,10 +222,7 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <p className="text-sm leading-relaxed text-white/80">
-            Based on your analytical personality and moderate risk tolerance,
-            we prioritize companies with strong fundamentals, predictable
-            earnings, and exposure to long-term technology trends. Volatile
-            stocks are included selectively for upside potential.
+            {personalityType?.description}
           </p>
         </CardContent>
       </Card>
